@@ -1,0 +1,589 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{wrapfig}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[margin=1in]{geometry}
+\usepackage{gensymb}
+
+\newcommand{\no}{\noindent}
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PART A
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Part A - An Active Filter}
+In this experiment we will "wire-up" and test a second order active filter seen in figure \ref{fig:A-circuit-1}. The goal is to select the values of $\text{R}_1$ and $\text{R}_2$ so that the filter becomes a Butterworth low-pass. This can be achieved by varying the value of $\text{A}_m$ so that the poles lie at specific location locations on a circle, centred at the origin, in the s-plane (as shown in the notes). 
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{A-circuit-1.png}
+        \caption{A second order low pass filter}
+        \label{fig:A-circuit-1}
+    \end{figure}
+
+\subsection*{1 - Capacitor and Gain Values}
+Now we will calculate the values of C and $\text{A}_m$ for the following design specifications.
+    \begin{itemize}
+        \item R and $\text{R}_1 + \text{R}_2$ both equal 10$\si{\kilo\ohm}$
+        \item $\text{f}_c$, the cutoff frequency is 10$\si{\kilo\hertz}$
+    \end{itemize}
+Since we know the transfer function of the circuit to be
+$$ H(s) = \frac{1/(RC)^2}{s^2+s(\frac{3-A_m}{RC})+1/(RC)^2} $$
+and we want to design a second-order Butterworth filter, we can write the characteristic equation as 
+$$  s^2+2\zeta\omega_n s +\omega_n^2.$$
+From this we get
+$$ f_n = \frac{1}{2\pi RC},\hspace{1cm}\zeta=\frac{3-A_m}{2}.$$
+As shown in the notes, we can estimate $f_c=f_n$. We can solve this to get 
+$$ C = 1.6 \si{\nano\farad}. $$
+Next, we can write the normalized Butterworth polynomial
+$$ s^2+1.414s+1 $$
+from which we can compute the gain value. 
+    \begin{align*}
+        A_m &= 3 - 2\zeta \\
+          &= 3 - 1.414 = 1.586 
+    \end{align*}
+We also know that 
+    \begin{align*}
+        A_m &= 1 + \frac{R_2}{R_1} = 1.586 \\
+        10 &= R_1 + R_2
+    \end{align*}
+Solving we get 
+$$ R_1 \approx 6.305 \si{\kilo\ohm}, \hspace{1cm} R_2 \approx 3.69\si{\kilo\ohm}. $$
+The complete circuit is shown in figure \ref{fig:A-circuit-1}. Our final results are tabulated in figure 
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            $A_m$ & $R_1$ ($\si{\kilo\ohm}$) & $R_2$ ($\si{\kilo\ohm}$) & C ($\si{\nano\farad}$) \\
+            \hline
+            1.586 & 6.305 & 3.69 & 1.6 \\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{}
+        \label{fig:my_label}
+    \end{figure}
+
+\no The bode plot for the circuit in figure \ref{fig:A-circuit-1} may be seen in figure \ref{fig:A_bode}. We can see that the cut-off point is at almost exactly 10$\si{\kilo\hertz}$. 
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{A-bode.png}
+        \caption{Bode Plot, Phase and Magnitude}
+        \label{fig:A_bode}
+    \end{figure}
+    
+\no In figure \ref{fig:A-pzplot} we can see the location of the poles in the s-plane. Since we have a second order filter, we can see, as expected, that our poles are complex conjugate pairs. From the plot we obtain the value of the poles.
+$$ s = -44.2 \pm i 44.2 $$
+We can see that 
+$$ \angle s = \arctan(1) = 45\degree,$$
+which is a characteristic of a Butterworth filter. 
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{A-pzplot.png}
+        \caption{Pole plot}
+        \label{fig:A-pzplot}
+    \end{figure}
+
+\subsection*{2 - Oscillation}
+Keeping $R_1+R_2 = 10$ we will change $R_1$ and $R_2$ slowly to increase $A_m$. We will stop when we start to observe oscillations at the output. We will check for oscillations by grounding the input, shown in figure \ref{fig:A-circuit-2}.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\linewidth]{A-circuit-2.png}
+        \caption{This circuit produces an oscillating output}
+        \label{fig:A-circuit-2}
+    \end{figure}
+    
+\no To find the values of $A_m$ that causes steady oscillations at the output we need the poles to be exactly on the $j\omega$-axis. Strictly speaking, unless the pole is on the real axis (over-damped/critically damped) we will observe oscillations. These oscillations, however, will be enveloped by an exponentially increasing or decreasing term, depending on the location of the pole in the complex plane (open right hand or open left hand plane). To find the value of $A_m$ that results in steady oscillations we solve for s.
+    \begin{align*}
+        0 &= s^2 +s(\frac{3-A_m}{RC})+\frac{1}{(RC)^2} \\
+        s &= -\frac{3-A_m}{RC} \pm \frac{1}{2}\sqrt{(\frac{3-A_m}{RC})^2-\frac{4}{(RC)^2}} 
+    \end{align*}
+\no If we set $A_m = 3$ we get 
+    \begin{align*}
+        s &= \pm \frac{j}{RC}
+    \end{align*}
+as desired. Now, we have that $A_m =3$, but $A_m=1+R_2/R_1$ and $R_1+R_2 = 10 \si{\kilo\ohm}$. Solving these two equations we get the values reported in figure \ref{fig:A-tab-3}.
+The complete circuit is shown in figure \ref{fig:A-circuit-2}. If we probe the output we get the plot seen in figure \ref{fig:A-oscillation}. The frequency is reported in figure \ref{fig:A-tab-3}.
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            $R_1$ ($\si{\kilo\ohm}$) & $R_2$ ($\si{\kilo\ohm}$)& $f$ ($\si{\kilo\hertz}$) \\
+            \hline
+            3.33 & 6.67 & 9.54 \\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{Results}
+        \label{fig:A-tab-3}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{A-oscillation.png}
+        \caption{Steady oscillations are observed}
+        \label{fig:A-oscillation}
+    \end{figure}
+    
+\no We can justify our earlier statement that we will see oscillations that are not steady when the value of $A_m$ is not equal to three. We will do this by changing $R_1$ and $R_2$ as seen in figures \ref{fig:A-over} where we see growth and figure \ref{fig:A-under} where we see decay. Even if we change the resistor values slightly we still can see growth or decay as seen in figure \ref{fig:A-slightly}.
+
+    \begin{figure}[H]
+        \centering
+        \begin{minipage}{.5\textwidth}
+          \centering
+          \includegraphics[width=.9\linewidth]{A-over.png}
+          \captionof{figure}{Here $R_2 =7 \si{\kilo\ohm}$ and $R_1=3\si{\kilo\ohm}$}
+          \label{fig:A-over}
+        \end{minipage}%
+        \begin{minipage}{.5\textwidth}
+          \centering
+          \includegraphics[width=.9\linewidth]{A-under.png}
+          \captionof{figure}{Here $R_2 =6.5 \si{\kilo\ohm}$ and $R_1=3.5\si{\kilo\ohm}$}
+          \label{fig:A-under}
+        \end{minipage}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{A-slightly.png}
+        \caption{$R_2=6.7\si{\kilo\ohm}$ and $R_1 = 3.3\si{\kilo\ohm}$}
+        \label{fig:A-slightly}
+    \end{figure}
+    
+\subsection*{Changing the Gain}
+Changing the gain, $A_m$, has the effect of moving the poles around the s-plane. We can plot the root locus to see exactly how the poles are moving as we change the gain. However, before we plot the root locus we need to rearrange the transfer function so that $A_m$ does not appear as a coefficient in the characteristic equation. Right now, our characteristic equation for the closed loop system is
+$$ s^3 +3s - s \frac{A_m}{RC}+\frac{1}{(RC)^2} = 0 $$
+which we can write as 
+$$ -1 +A_m \frac{s/RC}{s^2+3s+1/(RC)^2} = 0. $$
+The two characteristic equations are equivalent but now we can plot the root locus as seen in figure \ref{fig:A-root-locus}. From the root locus plot we can see that changing the value of $A_m$ has the effect of moving the poles around the circle centered at the origin with radius 60 unless the system has $\zeta=1$ which results in movement along the real axis. From the root locus we can see when the system will be under damped (open left hand plane) and when it will be critically damped (real axis). 
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.6\linewidth]{A-root-locus.png}
+        \caption{Root locus plot}
+        \label{fig:A-root-locus}
+    \end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PART B
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Part B - A Phase Shift Oscillator}
+\subsection*{Experiment}
+In this part, we will investigate a phase shift oscillator, shown in figure \ref{fig:B-circuit-1}. In order to achieve steady oscillations, we increase the value of the 29R resistor to 29.1R, otherwise, at 29R the oscillations eventually decay. Note that increasing this value further has the effect of reducing the time it takes to reach a steady state, however this may also increase the output resistance. The output of the oscillator is shown in figures \ref{fig:B-output-1} and \ref{fig:B-output-2}. The frequency is 64.37$\si{\hertz}$.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{B-circuit-1.png}
+        \caption{A Phase Shift Oscillator}
+        \label{fig:B-circuit-1}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \begin{minipage}{.5\textwidth}
+          \centering
+          \includegraphics[width=.9\linewidth]{B-output-1.png}
+          \captionof{figure}{Output of our Phase Shift Oscillator}
+          \label{fig:B-output-1}
+        \end{minipage}%
+        \begin{minipage}{.5\textwidth}
+          \centering
+          \includegraphics[width=.9\linewidth]{B-output-2.png}
+          \captionof{figure}{Zooming in on output}
+          \label{fig:B-output-2}
+        \end{minipage}
+    \end{figure}
+    
+\no Next, we will increase the R and C values by a factor of 2. That is R becomes 2$\si{\kilo\ohm}$, the 29R resistor becomes 58.2$\si{\kilo\ohm}$ and C becomes $2\si{\micro\farad}$. We notice that, it takes much longer for this circuit to reach a steady state value. Measuring the frequency we get 16.67$\si{\hertz}$. Decreasing by a factor of two, we get a frequency of 253.68$\si{\hertz}$, also we notice that the time it takes to reach a steady amplitude is much less. Our final results are tabulated in figure \ref{fig:B-tab}.
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            R ($\si{\kilo\ohm}$) & C ($\si{\micro\farad}$) & f ($\si{\hertz}$) \\ 
+            \hline
+            1 & 1 & 64.37 \\
+            \hline
+            2 & 2 & 16.67 \\
+            \hline 
+            0.5 & 0.5 & 253.68 \\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{Final Experimental Results}
+        \label{fig:B-tab}
+    \end{figure}
+    
+\subsection*{Report}
+The basic structure of the oscillator consists of a negative feedback amplifier with a third-order RC ladder in the feedback loop. When the phase shift of the RC network is 180$\si{\degree}$, the circuit will oscillate at that frequency. This is because the total phase shift of the loop is then 0$\si{\degree}$ or 360$\si{\degree}$. If we wish to sustain the oscillations we need to choose the gain of the op-amp to be equal to the inverse of the magnitude of the RC network transfer function for a particular oscillation frequency. As was shown in the notes, the gain value we need for this particular oscillator is $k=-29$. This value for the gain is exactly the value that will satisfy the unity-loop-gain method, however, in order to start oscillations we need to increase the value of 29R slightly. We could also introduce into the LTspice model a white noise source with relatively small amplitude that will kick-start the oscillations. 
+
+\no From the notes we have the following equation. Using the formula we can predict the oscillation frequencies as shown in figure \ref{fig:B-tab-2}.
+    $$ f = \frac{1}{2\pi\sqrt{6}RC}$$
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            R ($\si{\kilo\ohm}$) & C ($\si{\micro\farad}$) & f ($\si{\hertz}$) & $\%$ Error \\ 
+            \hline
+            1 & 1 & 64.97 & 0.92\\
+            \hline
+            2 & 2 & 16.24 &  2.65\\
+            \hline 
+            0.5 & 0.5 & 260.00 & 2.43\\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{Theoretical Results}
+        \label{fig:B-tab-2}
+    \end{figure}
+    
+\no As we can see, the difference between the experimental and theoretical results is negligible.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PART C
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Part C - A Feedback Circuit}
+In this part, we investigate a basic feedback network. Here the open loop gain is provided by a common-emitter amplifier in cascade with a common-collector. The negative feedback gain is provided by a resistor network, $R_f$. We are told: "the feedback network samples the output voltage and converts it into a current which is mixed with the input signal at the base of $Q_1$". From this we can determine, that we should use a shunt-shunt topology since current is subtracted in parallel and voltage is measured in parallel.
+
+\subsection*{Bias Circuit}
+We can adjust the bias point of the circuit seen in figure \ref{fig:C-bias-circuit} so that open loop gain of the circuit seen in figure \ref{fig:C-OL-circuit} is maximized at 1$\si{\kilo\hertz}$. We can do this by finding a value of $R_{B2}$ that simply biases the circuit in figure \ref{fig:C-bias-circuit} and then performing a parameter sweep starting at that value and increasing by 0.1$\si{\kilo\ohm}$ increments until we reach a maximum value for the gain as seen in figure \ref{fig:C-max-gain}. We can find the starting value for $R_{B2}$ as follows. Here we use $\beta=120$ which we found in previous mini projects.
+    
+    \begin{align*}
+        I_1 &= \frac{15\si{\volt}-0.7\si{\volt}}{330\si{\kilo\ohm}} = 43.33 \si{\micro\ampere} \\
+        I_1 &= 0.1\times I_{E1} \implies I_{E1} = 433.33 \si{\micro\ampere} \\
+        I_{B1} &= \frac{I_{C1}}{\beta} \approx \frac{I_{E1}}{\beta} = 3.61 \si{\micro\ampere} \\
+        I_2 &= I_1-I_{B1} = 39.72 \si{\micro\ampere} \\ 
+        R_{B2} &= \frac{0.7\si{\volt}}{I_2} = 17.62 \si{\kilo\ohm} 
+    \end{align*}
+    
+\no Performing the parameter sweep we find that the best value for $R_{B2}$ is 20$\si{\kilo\ohm}$. Measuring the voltage gain for the circuit in figure \ref{fig:C-OL-circuit} we get that the gain is $-127\si{\frac{\volt}{\volt}}$.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\linewidth]{C-bias-circuit.png}
+        \caption{The bias circuit}
+        \label{fig:C-bias-circuit}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{C-OL-circuit.png}
+        \caption{Open loop circuit}
+        \label{fig:C-OL-circuit}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{C-max-gain.png}
+        \caption{Gain vs Sweep values for $R_{B2}$. Note absolute value is plotted}
+        \label{fig:C-max-gain}
+    \end{figure}
+    
+\subsection*{1 - DC Parameters}
+    
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|l|l|l|l|l|l|l|}
+            \hline
+               & $I_{B}$                  & $I_{C}$                   & $I_{E}$                  & $V_{B}$           & $V_{C}$         & $V_{E}$          \\ \hline
+            Q1 & 1.29$\si{\milli\ampere}$ & 10.8$\si{\micro\ampere}$  & 1.31$\si{\milli\ampere}$ & 0.654$\si{\volt}$ & 1.9$\si{\volt}$ & 0$\si{\volt}$    \\ \hline
+            Q2 & 2.19$\si{\milli\ampere}$ & 15.40$\si{\micro\ampere}$ & 2.21$\si{\milli\ampere}$ & 1.9$\si{\volt}$   & 15$\si{\volt}$  & 1.24$\si{\volt}$ \\ \hline
+        \end{tabular}
+        \caption{Operating Point}
+        \label{fig:C-op}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|c|c|c|}
+            \hline
+            $g_{m1}$ & $g_{m2}$ & $\beta_1$ & $\beta_2$ & $r_{\pi 1}$ & $r_{\pi 2}$  \\
+            \hline
+            51.6 $\si{\milli\siemens}$ & 87.6 $\si{\milli\siemens}$ & 120 & 142 & 2.3 $\si{\kilo\ohm}$ & 1.6$\si{\kilo\ohm}$ \\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{DC parameters}
+        \label{fig:C-tab-2}
+    \end{figure}
+
+\subsection*{2 - Open-Loop Frequency Response}
+The bode plot for the circuit seen in figure \ref{fig:C-OL-circuit} is shown in figure \ref{fig:C-bode-1}. From this we can obtain the cut-off frequencies seen in figure \ref{fig:C-OL-cutoff}. 
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|}
+            \hline 
+            $f_{L3dB}$ & $f_{H3dB}$ \\
+            \hline
+            2.90 & 90.72$\times10^3$\\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{Open-loop cutoff frequencies given in $\si{\hertz}$}
+        \label{fig:C-OL-cutoff}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{C-bode.png}
+        \caption{Bode plot for open loop circuit}
+        \label{fig:C-bode-1}
+    \end{figure}
+    
+\no Next, we can measure the input and output resistances. We can do this using a test source and measuring the test current then taking the ratio. For example, the circuit in figure \ref{fig:C-OL-Ri} is used to measure the input resistance. The results are tabulated in figure \ref{fig:C-R-tab}.
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|}
+            \hline
+            $R_i$ & $R_o$  \\
+            \hline
+            2.56 & 66.05 \\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{I/O resistances given in $\si{\kilo\ohm}$}
+        \label{fig:C-R-tab}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{C-OL-Ri.png}
+        \caption{Circuit used to measure input resistance}
+        \label{fig:C-OL-Ri}
+    \end{figure}
+    
+\subsection*{2 - Predicting Closed Loop frequency Response}
+The closed loop circuit is shown in figure \ref{fig:C-CL-circuit}. To predict the closed-loop transfer function we first need to find the y-parameters (shunt-shunt). Since the feedback network is just $R_f$ this is relatively simple and is shown in figure \ref{fig:C-y-params}. We ignore $y_{21}$ since it is negligible.
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            $y_{11}$ & $y_{12}$ & $y_{22}$ \\
+            \hline
+            $\frac{1}{R_f}$ & $\frac{-1}{R_f}$ & $\frac{1}{R_f}$ \\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{The y-parameters}
+        \label{fig:C-y-params}
+    \end{figure}
+    
+\no Note that we will denote $Y_{12}$ as $\beta$ and since $R_f=100\si{\kilo\ohm}$, $\beta= 10 \si{\milli\siemens}$. Recall, that the open loop voltage gain is -127. We want 
+$$ A_f = \frac{A}{1+A\beta}, $$
+where A is transresistance and $\beta$ is transconductance. To find A notice that 
+
+    \begin{align*}
+        A &= \frac{V_o}{i_i} = \frac{V_o}{\frac{V_i}{R_s}} = R_s\frac{V_o}{V_i} = 5\si{\kilo\ohm}\times 127\\
+        &= -635\times10^3 \frac{\si{\volt}}{\si{\ampere}} \\
+        A_f &= \frac{A}{1+A\beta} = 86.39\times10^2 \frac{\si{\volt}}{\si{\ampere}}
+    \end{align*}
+    
+\no Thus the closed loop voltage gain is $\frac{A_f}{R_s}=-17.28$. Next, we can calculate and measure the values of input and output resistance shown in figure \ref{fig:C-R-2}. We can see that our measured and calculated results are quite similar.
+
+    \begin{align*}
+        R_{if} &= \frac{R_i}{1+A\beta}\\
+        R_{of} &= \frac{R_o}{1+A\beta}
+    \end{align*}
+    
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+             & $R_{if}$ & $R_{of}$   \\
+             \hline
+            Calculated & 348.3 & 8.99 \\
+            \hline
+            Measured & 253.1 & 5.68$\si{\ohm}$ \\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{CL I/O resistances given in $\si{\ohm}$}
+        \label{fig:C-R-2}
+    \end{figure}
+    
+\no Next, we calculated the new cutoff frequency that are a result of bandwidth extension. Notice that while the high frequency calculation is within 2 percent, our low frequency calculation is within 32 percent, much worse. Results are tabulated below. 
+
+    \begin{align*}
+        f_{Hf} &= f_H(1+A\beta) \\
+        f_{Lf} & = \frac{f_L}{1+A\beta}
+    \end{align*}
+    
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+             & $f_{Hf}$ & $f_{Lf}$   \\
+             \hline
+            Calculated & 666.8 & 0.395 \\
+            \hline
+            Measured & 683.1 & 0.52 \\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{CL cutoff frequencies given in $\si{\hertz}$}
+        \label{fig:C-CL-freq}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{C-CL-circuit.png}
+        \caption{Closed-loop circuit}
+        \label{fig:C-CL-circuit}
+    \end{figure}
+
+\newpage
+\subsection*{2 - Comparing Responses}
+The bode plot for the closed loop circuit is shown in figure \ref{fig:C-CL-bode}. We can see that the gain is approximately 25dB which is very close to the gain we predicted of 24.75dB ($20\log(17.28)$).
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+             & Voltage Gain OL & Voltage Gain CL   \\
+             \hline
+            Calculated & n/a & 24.74dB \\
+            \hline
+            Measured & 42.1dB & 25.5dB \\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{Comparing Voltage gains in dB}
+        \label{fig:C-voltage-gains}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{C-CL-bode.png}
+        \caption{Bode Plot for the closed loop circuit}
+        \label{fig:C-CL-bode}
+    \end{figure}
+    
+\subsection*{3 - Changing $R_f$}
+In this part we will vary the values of $R_f$ and see how it effects the values for $\beta$ as well as the gains, both voltage and transresistance. The values for $R_f$ are: 1 $\si{\kilo\ohm}$, 10$\si{\kilo\ohm}$, 100$\si{\kilo\ohm}$, 1$\si{\mega\ohm}$, 10$\si{\mega\ohm}$. The bode plot is shown in figures \ref{fig:C-vary-mag} and \ref{fig:C-vary-phase}. In figure \ref{fig:C-mega-table} we tabulate and compare all the results of our calculated and measured gains. To calculate the gains we use the same formulas from the parts above and also using the fact that it is an inverting amplifier.
+$$ \beta = \frac{A-A_f}{AA_f} $$ 
+\no We can see that our calculated and measured values for $\beta$ are within 0.2$\%$.
+
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|c|c|c|}
+            \hline
+            $R_f$ & Gain (dB) & Gain ($\frac{V}{V}$) & $A_f$ ($\frac{V}{A}$) & $\beta_{calc}$ & $\beta_{meas}$ \\
+            \hline 
+            1$\si{\kilo\ohm}$ & -14.02 & -0.20 & -1$\times10^{-3}\si{\kilo}$ & $-10^{-3}$ & -9.98$\times10^{-4}$\\
+            \hline
+            10$\si{\kilo\ohm}$ & 5.86 & -1.96 & -9.8$\times10^{-3}\si{\kilo}$ & $-10^{-4}$ & -1.00$\times10^{-4}$\\
+            \hline
+            100$\si{\kilo\ohm}$ & 24.73 & -17.24 & -86.2$\times10^{-3}\si{\kilo}$ & $-10^{-5}$ & -1.00$\times10^{-5}$\\
+            \hline
+            1$\si{\mega\ohm}$ & 37.82 & -77.80 & -389$\si{\kilo}$ & $-10^{-6}$ & -9.96$\times10^{-7}$\\
+            \hline
+            10$\si{\mega\ohm}$ & 41.58 & -119.95 & -599.8$\si{\kilo}$ & $-10^{-7}$ & -9.24$\times10^{-8}$\\
+            \hline
+        \end{tabular}
+        \caption{How varying $R_f$ effects the Gains}
+        \label{fig:C-mega-table}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{C-vary-mag.png}
+        \caption{Magnitude plots}
+        \label{fig:C-vary-mag}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{C-vary-phase.png}
+        \caption{Phase plots}
+        \label{fig:C-vary-phase}
+    \end{figure}
+    
+\subsection*{4 - Amount of Feedback}
+In this part, we will first vary the value of $R_f$ and see how it effects the input and output resistances at 1$\si{\kilo\hertz}$. The results are tabulated in figure \ref{fig:C-4-tab}. The large percent error is likely due to the fact that we ignored $r_\pi$ in our predicted calculations.
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|c|c|c|c|}
+        \hline
+        $R_{f}$             & $R_{if}$ (meas)   & $R_{if}$ (pred)     & $\%$ error & $R_{of}$ meas     & $R_{of}$ (pred)    & $\%$ error \\
+        \hline
+        10$\si{\kilo\ohm}$  & 26.5$\si{\ohm}$   & 39.69$\si{\ohm}$    & 27         & 0.79$\si{\ohm}$   & 1.024$\si{\ohm}$ & 23         \\
+        \hline
+        100$\si{\kilo\ohm}$ & 241.38$\si{\ohm}$ & 348.3$\si{\ohm}$    & 30         & 5.68$\si{\ohm}$   & 8.99$\si{\ohm}$  & 36         \\
+        \hline
+        1$\si{\mega\ohm}$   & 1310 $\si{\ohm}$  & 1.6$\si{\kilo\ohm}$ & 19         & 30.24 $\si{\ohm}$ & 40.4$\si{\ohm}$  & 25      \\ [1ex]
+        \hline
+        \end{tabular}
+        \caption{How varying $R_f$ changes the I/O resistances}
+        \label{fig:C-4-tab}
+    \end{figure}    
+    
+\no The amount of feedback is $1+A\beta$. We can then compare the predicted and measured amount of feedback shown in figure \ref{fig:C-4-tab-2}. The measured value can be determined by the following.
+$$ 1+A\beta = \frac{R_{i/o}}{R_f} $$
+For the predicted amount of feedback we will use $A$ from the above parts and $\beta=\frac{-1}{R_f}$. 
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            $R_{f}$             & Estimated in & Estimated out & Predicted\\
+            \hline
+            10$\si{\kilo\ohm}$  & 96.6         & 83.6          & 64.5         \\
+            \hline
+            100$\si{\kilo\ohm}$ & 10.6         & 11.63         & 7.35         \\
+            \hline
+            1$\si{\mega\ohm}$   & 1.96         & 2.2           & 1.635       \\ [1ex]
+            \hline
+        \end{tabular}
+        \caption{Amount of feedback comparisons}
+        \label{fig:C-4-tab-2}
+    \end{figure}
+    
+\section*{5 - Desensitivity Factor}
+The desensitivity factor can be found by taking the derivative of $A_f$ with respect to A as done in the notes, we get $1+A\beta$. If $R_f$ is infinite we have the open loop system and since $\beta = \frac{-1}{R_f}=0$, the desensitivity factor is unity. If we vary the value of $R_C$ we can see the gain changes as shown in figure \ref{fig:C-5-tab-1} and \ref{fig:C-5-tab-2}.
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|l|l|}
+            \hline
+            $R_C$                & Gain     \\ \hline
+            9.9$\si{\kilo\ohm}$  & -126.115 \\ \hline
+            10$\si{\kilo\ohm}$   & -126.799 \\ \hline
+            10.1$\si{\kilo\ohm}$ & -127.407 \\ \hline
+        \end{tabular}
+        \caption{$R_f$ is infinite, we see gain is sensitive to changes in $R_C$}
+        \label{fig:C-5-tab-1}
+    \end{figure}
+    
+\no Notice that the gain changes as we change $R_C$ slightly. Next, the desensiitivity factor for $R_f = 100 \si{\kilo\ohm}$ is 
+$$ 1+A\beta = 7.35. $$
+\no Since for 100$\si{\kilo\ohm}$ our measured $\beta$ is the same as our calculated $\beta$, there is no significant difference in the expected and measured value for the desensitivity factor.
+
+    \begin{figure}[H]
+        \centering
+        \begin{tabular}{|l|l|}
+            \hline
+            $R_C$                & Gain     \\ \hline
+            9.9$\si{\kilo\ohm}$  & -17.2209 \\ \hline
+            10$\si{\kilo\ohm}$   & -17.2339 \\ \hline
+            10.1$\si{\kilo\ohm}$ & -17.2457 \\ \hline
+        \end{tabular}
+        \caption{$R_f=100\si{\kilo\ohm}$, gain is desensitized to changes in $R_C$}
+        \label{fig:C-5-tab-2}
+    \end{figure}
+    
+\no Now we can see that with a feedback network introduced, the gain is not sensitive to changes in $R_C$. This means that we only need one precision component in our circuit, $R_f$. We can pick out a cheap resistor for $R_C$ with a wide tolerance range and still achieve a desired gain. This reduces the overall cost of our amplifier. 
+
+\subsection*{Small $R_f$ value}
+Looking at figure \ref{fig:C-vary-mag} we notice that for smaller $R_f$ there is a spike in the gain for frequencies below midband. This likely arises from resonance.
+
+\end{document}
